@@ -526,6 +526,26 @@ body { font-family: "Microsoft YaHei", "SimHei", sans-serif; background: #f0f2f5
   2026年各校分数线、指标名额均可能变化，仅供志愿填报策略练习使用，不作为正式填报依据。
 </div>
 
+<!-- 欢迎提示框 -->
+<div class="modal-overlay active" id="welcomeModal">
+  <div class="modal" style="width:520px;">
+    <h2>📋 欢迎使用中考模拟志愿填报系统</h2>
+    <div style="font-size:14px;line-height:2;color:#444;padding:0 5px;">
+      <p>本系统用于<strong>模拟中考志愿填报与录取过程</strong>，帮助你理解：</p>
+      <ul style="padding-left:20px;margin:10px 0;">
+        <li>统招、指标到校、指标统调三种录取方式的<strong>检索顺序</strong></li>
+        <li>不同分数下，不同志愿填报策略带来的<strong>不同录取结果</strong></li>
+        <li>志愿之间的<strong>相互影响</strong>（如统招保底会"截断"指标到校机会）</li>
+      </ul>
+      <p style="margin-top:10px;">录取数据以 <strong>2025年大连市第九中学</strong> 的实际录取结果为参考标准。你可以反复尝试不同的分数和志愿组合，观察录取结果的变化。</p>
+      <p style="margin-top:10px;font-size:12px;color:#999;">⚠️ 仅供练习参考，不作为正式填报依据。</p>
+    </div>
+    <div class="btn-group" style="margin-top:20px;">
+      <button class="btn btn-primary" onclick="document.getElementById('welcomeModal').classList.remove('active')">我知道了，开始填报</button>
+    </div>
+  </div>
+</div>
+
 <!-- 成绩输入模态框 -->
 <div class="modal-overlay" id="scoreModal">
   <div class="modal">
