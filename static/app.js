@@ -194,13 +194,12 @@ function renderResult(score, vol, steps, admitted, admittedType) {
     html += `<div class="analysis-box" style="margin-top:0;margin-bottom:16px;">
       <h3>📍 你的位次信息</h3>
       <p>中考总分 <strong>${score}</strong>（模考分 ${mokaScore}/600 + 已确定科目 190）→ 全市约第 <strong>${rank}</strong> 名</p>
-      <p style="margin-top:6px;">以下高中2025统招线对应的预估位次：`;
+      <p style="margin-top:6px;">各校2025统招估算截止排名（位次法）：`;
     const topSchools = ['24中','育明','8中','辽附','1中','23中'];
     topSchools.forEach(s => {
-      const cmp = ZHIBIAO_COMPARE[s];
-      if (cmp) {
-        const r = getRankByZkScore(cmp.tz2025);
-        html += `<span class="rank-badge ${score >= cmp.tz2025 ? 'rank-low' : 'rank-high'}">${s} ${cmp.tz2025}分≈第${r||'?'}名</span> `;
+      const cr = CUTOFF_RANKS_2025[s];
+      if (cr) {
+        html += `<span class="rank-badge ${rank <= cr.cutoffRank ? 'rank-low' : 'rank-high'}">${s} ≈第${cr.cutoffRank}名</span> `;
       }
     });
     html += '</p></div>';
@@ -294,27 +293,32 @@ function renderDataReference() {
   // 一分一段查询
   html += `<div class="chart-container">
     <h3>📍 一分一段位次查询（2026年模考）</h3>
+    <div style="font-size:12px;color:#856404;background:#fff3cd;padding:8px 12px;border-radius:6px;margin-bottom:10px;">💡 <strong>位次法</strong>：模考与中考难度不同，分数不可直接比较，但排名具有可比性。以下根据各校统招人数×报考集中度系数估算截止排名。</div>
     <div class="rank-query">
       <label style="font-size:14px;font-weight:600;">输入模考分数（600分制）：</label>
       <input type="number" id="rankQueryInput" placeholder="550" min="300" max="600" step="1">
       <button class="btn btn-primary btn-sm" onclick="queryRank()">查询位次</button>
-      <span style="font-size:12px;color:#888;">或直接输入中考预估总分（790分制）：</span>
+      <span style="font-size:12px;color:#888;">或输入790分制总分查位次：</span>
       <input type="number" id="rankQueryZk" placeholder="740" min="490" max="790" step="0.5">
       <button class="btn btn-primary btn-sm" onclick="queryRankZk()">查询</button>
     </div>
     <div id="rankQueryResult"></div>
     <div style="margin-top:15px;overflow-x:auto;max-height:400px;overflow-y:auto;">
       <table class="data-table" id="yifenTable">
-        <thead><tr><th>模考分</th><th>中考预估(+190)</th><th>全市排名</th><th>可冲击学校</th></tr></thead>
+        <thead><tr><th>模考分</th><th>全市排名</th><th>统招可达最高校（位次法）</th></tr></thead>
         <tbody>`;
   // 每10分显示一行
   YIFENYIDUAN.filter((_, i) => i % 10 === 0).forEach(row => {
-    const zk = mokaToZhongkao(row.score);
+    const rank = row.rank;
+    const reachable = Object.entries(CUTOFF_RANKS_2025)
+      .filter(([, cr]) => rank <= cr.cutoffRank)
+      .sort((a, b) => a[1].cutoffRank - b[1].cutoffRank);
     let schools = '';
-    Object.entries(SCHOOL_DATA).forEach(([name, d]) => {
-      if (Math.abs(d.tongzhao - zk) <= 3) schools += `<span class="tag tag-tongzhao">${d.short}</span> `;
+    reachable.slice(0, 3).forEach(([short]) => {
+      schools += `<span class="tag tag-tongzhao">${short}</span> `;
     });
-    html += `<tr><td>${row.score}</td><td>${zk}</td><td>${row.rank}</td><td style="text-align:left;">${schools||'—'}</td></tr>`;
+    if (reachable.length > 3) schools += `<span style="color:#888;font-size:11px;">等${reachable.length}校</span>`;
+    html += `<tr><td>${row.score}</td><td>${rank}</td><td style="text-align:left;">${schools||'—'}</td></tr>`;
   });
   html += '</tbody></table></div></div>';
 
@@ -363,13 +367,18 @@ function queryRank() {
   const mokaScore = parseFloat(input.value);
   if (!mokaScore || mokaScore < 300 || mokaScore > 600) { alert('请输入300-600之间的模考分数'); return; }
   const rank = getRankByMokaScore(mokaScore);
-  const zk = mokaToZhongkao(mokaScore);
-  let resultHtml = `<div class="rank-result">模考 <strong>${mokaScore}</strong> 分 → 中考预估 <strong>${zk}</strong> 分 → 全市约第 <strong>${rank}</strong> 名`;
-  // 找可冲击的学校
+  let resultHtml = `<div class="rank-result">模考 <strong>${mokaScore}</strong> 分 → 全市约第 <strong>${rank}</strong> 名`;
+  resultHtml += '<div style="margin-top:4px;font-size:12px;color:#856404;">💡 位次法：模考排名≈中考排名，不同考试分数不可直接比较，排名更可靠</div>';
   resultHtml += '<div style="margin-top:8px;font-size:13px;">';
-  Object.entries(SCHOOL_DATA).forEach(([name, d]) => {
-    if (zk >= d.tongzhao) resultHtml += `<span class="tag tag-tongzhao">${d.short} 统招✓</span> `;
-    else if (zk >= d.zhibiao_min) resultHtml += `<span class="tag tag-zhibiao">${d.short} 指标✓</span> `;
+  Object.entries(CUTOFF_RANKS_2025).forEach(([short, cr]) => {
+    if (rank <= cr.cutoffRank) {
+      resultHtml += `<span class="tag tag-tongzhao">${short} 统招✓(≈${cr.cutoffRank}名)</span> `;
+    } else {
+      const zbCutoff = getZhibiaoCutoffRank(short);
+      if (zbCutoff && rank <= zbCutoff) {
+        resultHtml += `<span class="tag tag-zhibiao">${short} 指标可冲</span> `;
+      }
+    }
   });
   resultHtml += '</div></div>';
   document.getElementById('rankQueryResult').innerHTML = resultHtml;
@@ -381,11 +390,18 @@ function queryRankZk() {
   if (!zkScore || zkScore < 490 || zkScore > 790) { alert('请输入490-790之间的中考总分'); return; }
   const moka = zhongkaoToMoka(zkScore);
   const rank = getRankByZkScore(zkScore);
-  let resultHtml = `<div class="rank-result">中考总分 <strong>${zkScore}</strong> 分（模考 ${moka}）→ 全市约第 <strong>${rank}</strong> 名`;
+  let resultHtml = `<div class="rank-result">模考折算 <strong>${moka}</strong> 分 → 全市约第 <strong>${rank}</strong> 名`;
+  resultHtml += '<div style="margin-top:4px;font-size:12px;color:#856404;">💡 位次法：模考排名≈中考排名，不同考试分数不可直接比较，排名更可靠</div>';
   resultHtml += '<div style="margin-top:8px;font-size:13px;">';
-  Object.entries(SCHOOL_DATA).forEach(([name, d]) => {
-    if (zkScore >= d.tongzhao) resultHtml += `<span class="tag tag-tongzhao">${d.short} 统招✓</span> `;
-    else if (zkScore >= d.zhibiao_min) resultHtml += `<span class="tag tag-zhibiao">${d.short} 指标✓</span> `;
+  Object.entries(CUTOFF_RANKS_2025).forEach(([short, cr]) => {
+    if (rank <= cr.cutoffRank) {
+      resultHtml += `<span class="tag tag-tongzhao">${short} 统招✓(≈${cr.cutoffRank}名)</span> `;
+    } else {
+      const zbCutoff = getZhibiaoCutoffRank(short);
+      if (zbCutoff && rank <= zbCutoff) {
+        resultHtml += `<span class="tag tag-zhibiao">${short} 指标可冲</span> `;
+      }
+    }
   });
   resultHtml += '</div></div>';
   document.getElementById('rankQueryResult').innerHTML = resultHtml;

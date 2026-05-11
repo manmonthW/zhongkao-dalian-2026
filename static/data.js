@@ -124,6 +124,63 @@ const ZHIBIAO_COMPARE = {
   "红旗": { tz2025:732.0, zb2025:718.5, diff2025:13.5,  tz2024:735.0, zb2024:729.0, diff2024: 6.0  }
 };
 
+// ===== 统招截止排名估算（位次法）=====
+// 原理：按统招线高→低排列各校，累计统招人数×缓冲系数 = 截止排名
+// 缓冲系数：顶尖校吸引力强、高分集中，系数小(1.10)；中下游校选择分散，系数逐步增大
+const SCHOOL_RANK_ORDER = [
+  { short:'24中', buffer:1.10 },
+  { short:'育明', buffer:1.10 },
+  { short:'8中',  buffer:1.10 },
+  { short:'24金', buffer:1.12 },
+  { short:'辽附', buffer:1.12 },
+  { short:'1中',  buffer:1.18 },
+  { short:'23中', buffer:1.18 },
+  { short:'12中', buffer:1.18 },
+  { short:'理工附',buffer:1.25 },
+  { short:'36中', buffer:1.25 },
+  { short:'20高', buffer:1.25 },
+  { short:'旅顺', buffer:1.25 },
+  { short:'13中', buffer:1.30 },
+  { short:'3中',  buffer:1.30 },
+  { short:'48中', buffer:1.30 },
+  { short:'11中', buffer:1.35 },
+  { short:'2中',  buffer:1.35 },
+  { short:'16中', buffer:1.35 },
+  { short:'红旗', buffer:1.35 },
+];
+
+/** 计算各校统招截止排名
+ *  year=2025: 用2025统招人数; year=2026: 用2026统招人数 */
+function computeCutoffRanks(year) {
+  let cumulative = 0;
+  const result = {};
+  SCHOOL_RANK_ORDER.forEach(item => {
+    const enr = ENROLLMENT_2026[item.short];
+    if (!enr) return;
+    const tz = year === 2026 ? enr.tongzhao : (enr.tongzhao - enr.tz_change);
+    if (tz <= 0) return;
+    cumulative += tz;
+    result[item.short] = {
+      tongzhao: tz,
+      cumulative: cumulative,
+      cutoffRank: Math.round(cumulative * item.buffer),
+      buffer: item.buffer
+    };
+  });
+  return result;
+}
+
+const CUTOFF_RANKS_2025 = computeCutoffRanks(2025);
+const CUTOFF_RANKS_2026 = computeCutoffRanks(2026);
+
+/** 指标到校截止排名（统招截止 + 历史降分扩展） */
+function getZhibiaoCutoffRank(schoolShort) {
+  const cr = CUTOFF_RANKS_2025[schoolShort];
+  const cmp = ZHIBIAO_COMPARE[schoolShort];
+  if (!cr || !cmp || cmp.diff2025 <= 0) return null;
+  return Math.round(cr.cutoffRank * (1 + cmp.diff2025 * 0.025));
+}
+
 // ===== 2026年一分一段表（模考600分制，+190=中考790总分）=====
 const YIFENYIDUAN = [
   {score:580, rank:81},   {score:579, rank:118},  {score:578, rank:155},
