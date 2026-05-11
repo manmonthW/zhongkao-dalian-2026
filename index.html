@@ -4,369 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>2026大连中考模拟志愿填报系统</title>
-<style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: "Microsoft YaHei", "SimHei", sans-serif; background: #f0f2f5; color: #333; }
-
-/* 顶部导航 */
-.top-bar {
-  background: linear-gradient(135deg, #1a3a6c, #2a5298);
-  color: #fff;
-  padding: 12px 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-}
-.top-bar h1 { font-size: 18px; font-weight: 600; }
-.top-bar .badge {
-  background: #e74c3c;
-  color: #fff;
-  padding: 3px 10px;
-  border-radius: 12px;
-  font-size: 12px;
-  animation: pulse 2s infinite;
-}
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
-
-/* 考生信息 */
-.student-info {
-  background: #fff;
-  margin: 15px auto;
-  max-width: 1000px;
-  padding: 15px 20px;
-  border-radius: 8px;
-  border: 1px solid #e0e0e0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  align-items: center;
-}
-.student-info label { font-size: 13px; color: #666; }
-.student-info span { font-weight: 600; color: #1a3a6c; margin-left: 4px; }
-.student-info .info-item { display: flex; align-items: center; gap: 4px; }
-
-/* 批次容器 */
-.batch-container {
-  max-width: 1000px;
-  margin: 0 auto 20px;
-}
-
-/* 批次标题 */
-.batch-header {
-  background: linear-gradient(135deg, #1a3a6c, #2a5298);
-  color: #fff;
-  padding: 10px 20px;
-  border-radius: 8px 8px 0 0;
-  font-size: 15px;
-  font-weight: 600;
-  letter-spacing: 2px;
-}
-
-/* 段落 */
-.section {
-  background: #fff;
-  border: 1px solid #d0d7e2;
-  border-top: none;
-  padding: 0;
-}
-.section:last-child { border-radius: 0 0 8px 8px; }
-
-.section-header {
-  background: #e8edf5;
-  padding: 10px 20px;
-  font-size: 13px;
-  color: #1a3a6c;
-  font-weight: 600;
-  border-bottom: 1px solid #d0d7e2;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.section-body { padding: 12px 20px; }
-
-/* 志愿行 */
-.vol-group {
-  margin-bottom: 12px;
-}
-.vol-group-label {
-  font-size: 12px;
-  color: #888;
-  margin-bottom: 6px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-.vol-row {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  margin-bottom: 8px;
-  flex-wrap: wrap;
-}
-.vol-row label {
-  font-size: 13px;
-  color: #555;
-  min-width: 120px;
-  white-space: nowrap;
-}
-.vol-row select {
-  flex: 1;
-  min-width: 180px;
-  max-width: 280px;
-  padding: 7px 10px;
-  border: 1px solid #c0c8d8;
-  border-radius: 4px;
-  font-size: 13px;
-  background: #fff;
-  color: #333;
-  cursor: pointer;
-  transition: border-color 0.2s;
-}
-.vol-row select:focus {
-  outline: none;
-  border-color: #2a5298;
-  box-shadow: 0 0 0 2px rgba(42,82,152,0.15);
-}
-.vol-row select:disabled {
-  background: #f5f5f5;
-  color: #999;
-  cursor: not-allowed;
-}
-
-/* 专业选择 */
-.vol-row .major-select {
-  max-width: 180px;
-  min-width: 120px;
-}
-
-/* 分隔线 */
-.vol-divider {
-  border: none;
-  border-top: 1px dashed #d0d7e2;
-  margin: 10px 0;
-}
-
-/* 操作区 */
-.action-bar {
-  max-width: 1000px;
-  margin: 20px auto;
-  text-align: center;
-}
-.btn {
-  padding: 10px 36px;
-  border: none;
-  border-radius: 6px;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  margin: 0 8px;
-}
-.btn-primary {
-  background: linear-gradient(135deg, #2a5298, #1a3a6c);
-  color: #fff;
-}
-.btn-primary:hover { box-shadow: 0 4px 12px rgba(42,82,152,0.4); transform: translateY(-1px); }
-.btn-reset {
-  background: #e0e0e0;
-  color: #555;
-}
-.btn-reset:hover { background: #d0d0d0; }
-
-/* 成绩输入模态框 */
-.modal-overlay {
-  display: none;
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.5);
-  z-index: 1000;
-  justify-content: center;
-  align-items: center;
-}
-.modal-overlay.active { display: flex; }
-.modal {
-  background: #fff;
-  border-radius: 12px;
-  padding: 30px;
-  width: 420px;
-  max-width: 90vw;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-}
-.modal h2 {
-  font-size: 18px;
-  color: #1a3a6c;
-  margin-bottom: 20px;
-  text-align: center;
-}
-.modal .score-input-group {
-  text-align: center;
-  margin-bottom: 20px;
-}
-.modal .score-input-group input {
-  width: 160px;
-  padding: 12px;
-  font-size: 28px;
-  text-align: center;
-  border: 2px solid #c0c8d8;
-  border-radius: 8px;
-  font-weight: 700;
-  color: #1a3a6c;
-}
-.modal .score-input-group input:focus {
-  outline: none;
-  border-color: #2a5298;
-}
-.modal .score-hint {
-  font-size: 12px;
-  color: #999;
-  margin-top: 8px;
-}
-.modal .btn-group {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-}
-
-/* 结果面板 */
-.result-panel {
-  display: none;
-  max-width: 1000px;
-  margin: 20px auto;
-  background: #fff;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-}
-.result-panel.active { display: block; }
-
-.result-header {
-  padding: 20px 24px;
-  color: #fff;
-  font-size: 16px;
-  font-weight: 600;
-}
-.result-header.admitted { background: linear-gradient(135deg, #27ae60, #2ecc71); }
-.result-header.rejected { background: linear-gradient(135deg, #c0392b, #e74c3c); }
-
-.result-body { padding: 20px 24px; }
-
-.result-step {
-  display: flex;
-  align-items: flex-start;
-  margin-bottom: 12px;
-  padding: 10px 15px;
-  border-radius: 8px;
-  font-size: 13px;
-  line-height: 1.6;
-}
-.result-step.pass { background: #f0faf0; border-left: 4px solid #27ae60; }
-.result-step.fail { background: #fdf0f0; border-left: 4px solid #e74c3c; }
-.result-step.skip { background: #f5f5f5; border-left: 4px solid #bbb; color: #999; }
-.result-step.hit { background: #e8f5e9; border-left: 4px solid #2e7d32; }
-
-.result-step .step-icon {
-  min-width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  font-weight: 700;
-  margin-right: 12px;
-  flex-shrink: 0;
-}
-.result-step.pass .step-icon { background: #27ae60; color: #fff; }
-.result-step.fail .step-icon { background: #e74c3c; color: #fff; }
-.result-step.skip .step-icon { background: #bbb; color: #fff; }
-.result-step.hit .step-icon { background: #2e7d32; color: #fff; }
-
-.result-step .step-content { flex: 1; }
-.step-school { font-weight: 700; color: #1a3a6c; }
-.step-score { font-weight: 600; }
-.step-score.green { color: #27ae60; }
-.step-score.red { color: #e74c3c; }
-
-/* 分析区域 */
-.analysis-box {
-  margin-top: 20px;
-  padding: 16px;
-  background: #f8f9fc;
-  border-radius: 8px;
-  border: 1px solid #e0e4ef;
-}
-.analysis-box h3 {
-  font-size: 14px;
-  color: #1a3a6c;
-  margin-bottom: 10px;
-}
-.analysis-box p, .analysis-box li {
-  font-size: 13px;
-  line-height: 1.8;
-  color: #555;
-}
-.analysis-box ul { padding-left: 20px; }
-.analysis-box .highlight { color: #e74c3c; font-weight: 600; }
-.analysis-box .success { color: #27ae60; font-weight: 600; }
-
-/* 分数线参考表 */
-.ref-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 15px;
-  font-size: 12px;
-}
-.ref-table th {
-  background: #e8edf5;
-  padding: 8px 10px;
-  text-align: center;
-  color: #1a3a6c;
-  font-weight: 600;
-  border: 1px solid #d0d7e2;
-}
-.ref-table td {
-  padding: 6px 10px;
-  text-align: center;
-  border: 1px solid #e0e0e0;
-}
-.ref-table tr:nth-child(even) { background: #fafbfd; }
-.ref-table tr.current { background: #fff3cd; font-weight: 600; }
-
-/* 底部提示 */
-.footer-note {
-  max-width: 1000px;
-  margin: 15px auto 30px;
-  padding: 12px 20px;
-  background: #fff3cd;
-  border: 1px solid #ffc107;
-  border-radius: 8px;
-  font-size: 12px;
-  color: #856404;
-  line-height: 1.8;
-}
-
-/* 指标到校标记 */
-.tag {
-  display: inline-block;
-  padding: 1px 6px;
-  border-radius: 3px;
-  font-size: 11px;
-  font-weight: 600;
-  margin-left: 4px;
-}
-.tag-tongzhao { background: #e3f2fd; color: #1565c0; }
-.tag-zhibiao { background: #e8f5e9; color: #2e7d32; }
-.tag-tongtiao { background: #fff3e0; color: #e65100; }
-
-/* 响应式 */
-@media (max-width: 768px) {
-  .vol-row { flex-direction: column; align-items: flex-start; }
-  .vol-row select { max-width: 100%; }
-  .student-info { flex-direction: column; }
-}
-</style>
+<link rel="stylesheet" href="static/style.css">
 </head>
 <body>
 
@@ -380,155 +18,135 @@ body { font-family: "Microsoft YaHei", "SimHei", sans-serif; background: #f0f2f5
 <div class="student-info">
   <div class="info-item"><label>姓名：</label><span>模拟考生</span></div>
   <div class="info-item"><label>报名号：</label><span>2426XXXXXXXX</span></div>
-  <div class="info-item"><label>学校认证：</label><span>大连市第九中学</span></div>
-  <div class="info-item"><label>性别：</label><span>男</span></div>
+  <div class="info-item"><label>学校：</label><span>大连市第九中学</span></div>
   <div class="info-item"><label>志愿确认：</label><span style="color:#e74c3c">未确认</span></div>
 </div>
 
-<!-- 第一批次 -->
-<div class="batch-container">
-  <div class="batch-header">第 一 批 次 · 普 通 高 中</div>
-
-  <!-- 第一段 提前录取 -->
-  <div class="section">
-    <div class="section-header">
-      <span>第一段 · 提前录取</span>
-      <span style="font-size:11px;color:#888">大连市第十五中学（美术）</span>
-    </div>
-    <div class="section-body">
-      <div class="vol-row">
-        <label>学校志愿：</label>
-        <select id="s1_school">
-          <option value="">— 请选择 —</option>
-          <option value="大连市第十五中学">大连市第十五中学</option>
-        </select>
-      </div>
-    </div>
-  </div>
-
-  <!-- 第二段 省级示范性高中 -->
-  <div class="section">
-    <div class="section-header">
-      <span>第二段 · 省级示范性普通高中、大连市第二十四中学金普校区</span>
-    </div>
-    <div class="section-body">
-      <!-- 统招 -->
-      <div class="vol-group">
-        <div class="vol-group-label">统招 <span class="tag tag-tongzhao">统招</span></div>
-        <div class="vol-row">
-          <label>平行学校志愿A：</label>
-          <select id="s2_tz_a" class="school-select" data-type="tongzhao"></select>
-        </div>
-        <div class="vol-row">
-          <label>平行学校志愿B：</label>
-          <select id="s2_tz_b" class="school-select" data-type="tongzhao"></select>
-        </div>
-        <div class="vol-row">
-          <label>平行学校志愿C：</label>
-          <select id="s2_tz_c" class="school-select" data-type="tongzhao"></select>
-        </div>
-      </div>
-
-      <hr class="vol-divider">
-
-      <!-- 指标到校 -->
-      <div class="vol-group">
-        <div class="vol-group-label">指标到校 <span class="tag tag-zhibiao">指标</span></div>
-        <div class="vol-row">
-          <label>平行学校志愿A：</label>
-          <select id="s2_zb_a" class="school-select" data-type="zhibiao"></select>
-        </div>
-        <div class="vol-row">
-          <label>平行学校志愿B：</label>
-          <select id="s2_zb_b" class="school-select" data-type="zhibiao"></select>
-        </div>
-      </div>
-
-      <hr class="vol-divider">
-
-      <!-- 指标统调 -->
-      <div class="vol-group">
-        <div class="vol-group-label">指标统调 <span class="tag tag-tongtiao">统调</span></div>
-        <div class="vol-row">
-          <label>平行学校志愿A：</label>
-          <select id="s2_tt_a" class="school-select" data-type="tongtiao"></select>
-        </div>
-        <div class="vol-row">
-          <label>平行学校志愿B：</label>
-          <select id="s2_tt_b" class="school-select" data-type="tongtiao"></select>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 第三段 国际班 -->
-  <div class="section">
-    <div class="section-header">
-      <span>第三段 · 国际班</span>
-      <span style="font-size:11px;color:#888">两所学校不得兼报</span>
-    </div>
-    <div class="section-body">
-      <div class="vol-row">
-        <label>学校志愿：</label>
-        <select id="s3_school">
-          <option value="">— 请选择 —</option>
-          <option value="大连市第二十四中学国际班">大连市第二十四中学国际班</option>
-          <option value="大连理工大学附属高中国际班">大连理工大学附属高中国际班</option>
-        </select>
-      </div>
-    </div>
-  </div>
-
-  <!-- 第四段 一般普通高中 -->
-  <div class="section">
-    <div class="section-header">
-      <span>第四段 · 一般普通高中（含公办民办）</span>
-      <span style="font-size:11px;color:#888">限报3所公办 + 3所民办</span>
-    </div>
-    <div class="section-body">
-      <div class="vol-row">
-        <label>平行学校志愿A：</label>
-        <select id="s4_a" class="general-select"></select>
-      </div>
-      <div class="vol-row">
-        <label>平行学校志愿B：</label>
-        <select id="s4_b" class="general-select"></select>
-      </div>
-      <div class="vol-row">
-        <label>平行学校志愿C：</label>
-        <select id="s4_c" class="general-select"></select>
-      </div>
-      <div class="vol-row">
-        <label>平行学校志愿D：</label>
-        <select id="s4_d" class="general-select"></select>
-      </div>
-      <div class="vol-row">
-        <label>平行学校志愿E：</label>
-        <select id="s4_e" class="general-select"></select>
-      </div>
-      <div class="vol-row">
-        <label>平行学校志愿F：</label>
-        <select id="s4_f" class="general-select"></select>
-      </div>
-    </div>
-  </div>
+<!-- Tab 导航 -->
+<div class="tab-nav">
+  <button class="tab-btn active" data-tab="tab-form" onclick="switchTab('tab-form')">📝 志愿填报</button>
+  <button class="tab-btn" data-tab="tab-data" onclick="switchTab('tab-data')">📊 数据参考</button>
+  <button class="tab-btn" data-tab="tab-trend" onclick="switchTab('tab-trend')">📈 分数线趋势</button>
+  <button class="tab-btn" data-tab="tab-heat" onclick="switchTab('tab-heat')">🔥 指标分析</button>
 </div>
 
-<!-- 操作按钮 -->
-<div class="action-bar">
-  <button class="btn btn-reset" onclick="resetForm()">重置志愿</button>
-  <button class="btn btn-primary" onclick="submitVolunteers()">提交志愿 · 进入模拟录取</button>
+<!-- ==================== Tab1: 志愿填报 ==================== -->
+<div class="tab-content active" id="tab-form">
+
+  <div class="batch-container">
+    <div class="batch-header">第 一 批 次 · 普 通 高 中</div>
+
+    <!-- 第一段 -->
+    <div class="section">
+      <div class="section-header">
+        <span>第一段 · 提前录取</span>
+        <span style="font-size:11px;color:#888">大连市第十五中学（美术）</span>
+      </div>
+      <div class="section-body">
+        <div class="vol-row">
+          <label>学校志愿：</label>
+          <select id="s1_school">
+            <option value="">— 请选择 —</option>
+            <option value="大连市第十五中学">大连市第十五中学</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- 第二段 -->
+    <div class="section">
+      <div class="section-header">
+        <span>第二段 · 省级示范性普通高中、大连市第二十四中学金普校区</span>
+      </div>
+      <div class="section-body">
+        <div class="vol-group">
+          <div class="vol-group-label">统招 <span class="tag tag-tongzhao">统招</span></div>
+          <div class="vol-row"><label>平行学校志愿A：</label><select id="s2_tz_a" class="school-select"></select></div>
+          <div class="vol-row"><label>平行学校志愿B：</label><select id="s2_tz_b" class="school-select"></select></div>
+          <div class="vol-row"><label>平行学校志愿C：</label><select id="s2_tz_c" class="school-select"></select></div>
+        </div>
+        <hr class="vol-divider">
+        <div class="vol-group">
+          <div class="vol-group-label">指标到校 <span class="tag tag-zhibiao">指标</span></div>
+          <div class="vol-row"><label>平行学校志愿A：</label><select id="s2_zb_a" class="school-select"></select></div>
+          <div class="vol-row"><label>平行学校志愿B：</label><select id="s2_zb_b" class="school-select"></select></div>
+        </div>
+        <hr class="vol-divider">
+        <div class="vol-group">
+          <div class="vol-group-label">指标统调 <span class="tag tag-tongtiao">统调</span></div>
+          <div class="vol-row"><label>平行学校志愿A：</label><select id="s2_tt_a" class="school-select"></select></div>
+          <div class="vol-row"><label>平行学校志愿B：</label><select id="s2_tt_b" class="school-select"></select></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 第三段 -->
+    <div class="section">
+      <div class="section-header">
+        <span>第三段 · 国际班</span>
+        <span style="font-size:11px;color:#888">两所学校不得兼报</span>
+      </div>
+      <div class="section-body">
+        <div class="vol-row">
+          <label>学校志愿：</label>
+          <select id="s3_school">
+            <option value="">— 请选择 —</option>
+            <option value="大连市第二十四中学国际班">大连市第二十四中学国际班</option>
+            <option value="大连理工大学附属高中国际班">大连理工大学附属高中国际班</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- 第四段 -->
+    <div class="section">
+      <div class="section-header">
+        <span>第四段 · 一般普通高中（含公办民办）</span>
+        <span style="font-size:11px;color:#888">限报3所公办 + 3所民办</span>
+      </div>
+      <div class="section-body">
+        <div class="vol-row"><label>平行学校志愿A：</label><select id="s4_a" class="general-select"></select></div>
+        <div class="vol-row"><label>平行学校志愿B：</label><select id="s4_b" class="general-select"></select></div>
+        <div class="vol-row"><label>平行学校志愿C：</label><select id="s4_c" class="general-select"></select></div>
+        <div class="vol-row"><label>平行学校志愿D：</label><select id="s4_d" class="general-select"></select></div>
+        <div class="vol-row"><label>平行学校志愿E：</label><select id="s4_e" class="general-select"></select></div>
+        <div class="vol-row"><label>平行学校志愿F：</label><select id="s4_f" class="general-select"></select></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="action-bar">
+    <button class="btn btn-reset" onclick="resetForm()">重置志愿</button>
+    <button class="btn btn-primary" onclick="submitVolunteers()">提交志愿 · 进入模拟录取</button>
+  </div>
+
+  <div class="result-panel" id="resultPanel"></div>
+</div>
+
+<!-- ==================== Tab2: 数据参考 ==================== -->
+<div class="tab-content" id="tab-data">
+  <div id="dataRefContent"></div>
+</div>
+
+<!-- ==================== Tab3: 分数线趋势 ==================== -->
+<div class="tab-content" id="tab-trend">
+  <div id="trendContent"></div>
+</div>
+
+<!-- ==================== Tab4: 指标分析 ==================== -->
+<div class="tab-content" id="tab-heat">
+  <div id="heatContent"></div>
 </div>
 
 <!-- 底部提示 -->
 <div class="footer-note">
-  ⚠️ <strong>免责声明</strong>：本系统为模拟练习工具，录取数据参考2025年大连市第九中学的实际录取结果。
+  ⚠️ <strong>免责声明</strong>：本系统为模拟练习工具。录取数据参考2025年大连市第九中学的实际录取结果，一分一段数据来自2026年模考（600分制+190=790总分）。
   2026年各校分数线、指标名额均可能变化，仅供志愿填报策略练习使用，不作为正式填报依据。
 </div>
 
 <!-- 欢迎提示框 -->
 <div class="modal-overlay active" id="welcomeModal">
-  <div class="modal" style="width:520px;">
+  <div class="modal" style="width:560px;">
     <h2>📋 欢迎使用中考模拟志愿填报系统</h2>
     <div style="font-size:14px;line-height:2;color:#444;padding:0 5px;">
       <p>本系统用于<strong>模拟中考志愿填报与录取过程</strong>，帮助你理解：</p>
@@ -537,11 +155,12 @@ body { font-family: "Microsoft YaHei", "SimHei", sans-serif; background: #f0f2f5
         <li>不同分数下，不同志愿填报策略带来的<strong>不同录取结果</strong></li>
         <li>志愿之间的<strong>相互影响</strong>（如统招保底会"截断"指标到校机会）</li>
       </ul>
-      <p style="margin-top:10px;">录取数据以 <strong>2025年大连市第九中学</strong> 的实际录取结果为参考标准。你可以反复尝试不同的分数和志愿组合，观察录取结果的变化。</p>
+      <p style="margin-top:10px;">录取数据以 <strong>2025年大连市第九中学</strong> 的实际录取结果为参考标准。</p>
+      <p style="margin-top:6px;">新增：<strong>一分一段位次查询</strong>（模考600+190=790）、<strong>历年分数线趋势</strong>、<strong>指标竞争热度分析</strong>。</p>
       <p style="margin-top:10px;font-size:12px;color:#999;">⚠️ 仅供练习参考，不作为正式填报依据。</p>
     </div>
     <div class="btn-group" style="margin-top:20px;">
-      <button class="btn btn-primary" onclick="document.getElementById('welcomeModal').classList.remove('active')">我知道了，开始填报</button>
+      <button class="btn btn-primary" onclick="document.getElementById('welcomeModal').classList.remove('active')">我知道了，开始使用</button>
     </div>
   </div>
 </div>
@@ -552,7 +171,7 @@ body { font-family: "Microsoft YaHei", "SimHei", sans-serif; background: #f0f2f5
     <h2>🎯 请输入模拟中考成绩</h2>
     <div class="score-input-group">
       <input type="number" id="scoreInput" placeholder="775" min="500" max="800" step="0.5">
-      <div class="score-hint">参考范围：700 ~ 790（基于2025年9中数据）</div>
+      <div class="score-hint">输入中考总分（790分满分）</div>
     </div>
     <div class="btn-group">
       <button class="btn btn-reset" onclick="closeModal()">返回修改</button>
@@ -561,531 +180,7 @@ body { font-family: "Microsoft YaHei", "SimHei", sans-serif; background: #f0f2f5
   </div>
 </div>
 
-<!-- 结果面板 -->
-<div class="result-panel" id="resultPanel"></div>
-
-<script>
-// ===== 2025年9中录取数据 =====
-const SCHOOL_DATA = {
-  "大连市第二十四中学":   { tongzhao: 777,    zhibiao_min: 775,   zhibiao_max: 776.5, zhibiao_num: 6, tongtiao: 776 },
-  "大连育明高级中学":     { tongzhao: 772,    zhibiao_min: 771.5, zhibiao_max: 773.5, zhibiao_num: 7, tongtiao: 772 },
-  "大连市第八中学":       { tongzhao: 767.5,  zhibiao_min: 767,   zhibiao_max: 774.5, zhibiao_num: 7, tongtiao: 767.5 },
-  "大连二十四中金普校区": { tongzhao: 767.5,  zhibiao_min: 764.5, zhibiao_max: 764.5, zhibiao_num: 1, tongtiao: 766 },
-  "大连理工大学附属高中": { tongzhao: 766,    zhibiao_min: 766,   zhibiao_max: 771,   zhibiao_num: 6, tongtiao: 766 },
-  "大连市第一中学":       { tongzhao: 763.3,  zhibiao_min: 765.5, zhibiao_max: 768,   zhibiao_num: 4, tongtiao: 764 },
-  "大连市第二十三中学":   { tongzhao: 759,    zhibiao_min: 760,   zhibiao_max: 763,   zhibiao_num: 7, tongtiao: 760 },
-  "大连市第十二中学":     { tongzhao: 758,    zhibiao_min: 757.5, zhibiao_max: 766.5, zhibiao_num: 6, tongtiao: 758 },
-  "大连理工大学附属高中工附": { tongzhao: 756, zhibiao_min: 753,  zhibiao_max: 757,   zhibiao_num: 4, tongtiao: 755 },
-  "大连市第二十高级中学": { tongzhao: 751,    zhibiao_min: 749,   zhibiao_max: 761,   zhibiao_num: 7, tongtiao: 751 },
-  "大连市第三十六中学":   { tongzhao: 754,    zhibiao_min: 756,   zhibiao_max: 762.5, zhibiao_num: 4, tongtiao: 755 },
-  "鞍山中学":             { tongzhao: 747.75, zhibiao_min: 721.5, zhibiao_max: null,  zhibiao_num: 1, tongtiao: 740 },
-  "大连市第十三中学":     { tongzhao: 746.5,  zhibiao_min: 745.5, zhibiao_max: 753,   zhibiao_num: 5, tongtiao: 746 },
-  "大连市第三中学":       { tongzhao: 746,    zhibiao_min: 735,   zhibiao_max: 751,   zhibiao_num: 6, tongtiao: 742 },
-  "大连市第四十八中学":   { tongzhao: 743,    zhibiao_min: 735,   zhibiao_max: 748,   zhibiao_num: 5, tongtiao: 740 },
-  "大连市第十一中学":     { tongzhao: 741.5,  zhibiao_min: 728,   zhibiao_max: 748,   zhibiao_num: 7, tongtiao: 738 },
-  "大连市第十六中学":     { tongzhao: 734.5,  zhibiao_min: 726.5, zhibiao_max: 738.5, zhibiao_num: 4, tongtiao: 732 },
-  "大连市第二中学":       { tongzhao: 737.5,  zhibiao_min: 727,   zhibiao_max: 748.5, zhibiao_num: 5, tongtiao: 734 },
-  "大连红旗高级中学":     { tongzhao: 732,    zhibiao_min: 718.5, zhibiao_max: 733.5, zhibiao_num: 5, tongtiao: 728 }
-};
-
-// 一般普通高中（模拟数据）
-const GENERAL_SCHOOLS = {
-  "大连市第四中学（公办）":     { score: 720 },
-  "大连信息高中（公办）":       { score: 710 },
-  "大连经贸高中（公办）":       { score: 700 },
-  "大连综合中专（公办）":       { score: 690 },
-  "大连博雅高中（民办）":       { score: 680 },
-  "大连嘉汇高中（民办）":       { score: 715 },
-  "大连汇文高中（民办）":       { score: 695 },
-  "大连华南高中（民办）":       { score: 685 }
-};
-
-// ===== 初始化下拉菜单 =====
-function initSelects() {
-  const schoolNames = Object.keys(SCHOOL_DATA);
-  const selects = document.querySelectorAll('.school-select');
-  selects.forEach(sel => {
-    sel.innerHTML = '<option value="">— 请选择 —</option>';
-    schoolNames.forEach(name => {
-      const opt = document.createElement('option');
-      opt.value = name;
-      opt.textContent = name;
-      sel.appendChild(opt);
-    });
-  });
-
-  const generalNames = Object.keys(GENERAL_SCHOOLS);
-  const gSelects = document.querySelectorAll('.general-select');
-  gSelects.forEach(sel => {
-    sel.innerHTML = '<option value="">— 请选择 —</option>';
-    generalNames.forEach(name => {
-      const opt = document.createElement('option');
-      opt.value = name;
-      opt.textContent = name;
-      sel.appendChild(opt);
-    });
-  });
-}
-
-// ===== 收集志愿 =====
-function collectVolunteers() {
-  return {
-    s1: document.getElementById('s1_school').value,
-    tongzhao: [
-      document.getElementById('s2_tz_a').value,
-      document.getElementById('s2_tz_b').value,
-      document.getElementById('s2_tz_c').value
-    ],
-    zhibiao: [
-      document.getElementById('s2_zb_a').value,
-      document.getElementById('s2_zb_b').value
-    ],
-    tongtiao: [
-      document.getElementById('s2_tt_a').value,
-      document.getElementById('s2_tt_b').value
-    ],
-    s3: document.getElementById('s3_school').value,
-    general: [
-      document.getElementById('s4_a').value,
-      document.getElementById('s4_b').value,
-      document.getElementById('s4_c').value,
-      document.getElementById('s4_d').value,
-      document.getElementById('s4_e').value,
-      document.getElementById('s4_f').value
-    ]
-  };
-}
-
-// ===== 提交志愿 =====
-function submitVolunteers() {
-  const vol = collectVolunteers();
-  const hasAny = vol.tongzhao.some(v => v) || vol.zhibiao.some(v => v) ||
-                 vol.tongtiao.some(v => v) || vol.general.some(v => v) || vol.s1 || vol.s3;
-  if (!hasAny) {
-    alert('请至少填报一个志愿！');
-    return;
-  }
-  document.getElementById('scoreModal').classList.add('active');
-  document.getElementById('scoreInput').focus();
-}
-
-function closeModal() {
-  document.getElementById('scoreModal').classList.remove('active');
-}
-
-function resetForm() {
-  document.querySelectorAll('select').forEach(s => s.selectedIndex = 0);
-  document.getElementById('resultPanel').classList.remove('active');
-  document.getElementById('resultPanel').innerHTML = '';
-}
-
-// ===== 模拟录取核心逻辑 =====
-function simulateAdmission() {
-  const scoreStr = document.getElementById('scoreInput').value;
-  if (!scoreStr) { alert('请输入中考成绩！'); return; }
-  const score = parseFloat(scoreStr);
-  if (score < 400 || score > 800) { alert('请输入有效的分数（400-800）'); return; }
-
-  const vol = collectVolunteers();
-  closeModal();
-
-  const steps = [];
-  let admitted = null;
-  let admittedType = '';
-
-  // === 第一段：提前录取 ===
-  if (vol.s1) {
-    steps.push({
-      phase: '第一段 · 提前录取',
-      school: vol.s1,
-      type: '提前录取',
-      result: 'skip',
-      detail: '美术专业需专业考试成绩，本模拟跳过此段'
-    });
-  }
-
-  // === 第二段：统招 ===
-  const tzLabels = ['统招志愿A', '统招志愿B', '统招志愿C'];
-  for (let i = 0; i < vol.tongzhao.length; i++) {
-    const school = vol.tongzhao[i];
-    if (!school) {
-      steps.push({
-        phase: '第二段 · 统招',
-        school: '（未填报）',
-        type: tzLabels[i],
-        result: 'skip',
-        detail: '未填报，跳过'
-      });
-      continue;
-    }
-    if (admitted) {
-      steps.push({
-        phase: '第二段 · 统招',
-        school: school,
-        type: tzLabels[i],
-        result: 'skip',
-        detail: '已被前序志愿录取，不再检索'
-      });
-      continue;
-    }
-    const data = SCHOOL_DATA[school];
-    if (score >= data.tongzhao) {
-      admitted = school;
-      admittedType = '统招';
-      steps.push({
-        phase: '第二段 · 统招',
-        school: school,
-        type: tzLabels[i],
-        result: 'hit',
-        detail: `你的成绩 ${score} ≥ 统招线 ${data.tongzhao}，✅ 录取！`,
-        scoreLine: data.tongzhao
-      });
-    } else {
-      steps.push({
-        phase: '第二段 · 统招',
-        school: school,
-        type: tzLabels[i],
-        result: 'fail',
-        detail: `你的成绩 ${score} < 统招线 ${data.tongzhao}，差 ${(data.tongzhao - score).toFixed(1)} 分`,
-        scoreLine: data.tongzhao
-      });
-    }
-  }
-
-  // === 第二段：指标到校 ===
-  const zbLabels = ['指标到校志愿A', '指标到校志愿B'];
-  for (let i = 0; i < vol.zhibiao.length; i++) {
-    const school = vol.zhibiao[i];
-    if (!school) {
-      steps.push({
-        phase: '第二段 · 指标到校',
-        school: '（未填报）',
-        type: zbLabels[i],
-        result: 'skip',
-        detail: '未填报，跳过'
-      });
-      continue;
-    }
-    if (admitted) {
-      steps.push({
-        phase: '第二段 · 指标到校',
-        school: school,
-        type: zbLabels[i],
-        result: 'skip',
-        detail: '已被前序志愿录取，不再检索'
-      });
-      continue;
-    }
-    const data = SCHOOL_DATA[school];
-    if (score >= data.zhibiao_min) {
-      admitted = school;
-      admittedType = '指标到校';
-      steps.push({
-        phase: '第二段 · 指标到校',
-        school: school,
-        type: zbLabels[i],
-        result: 'hit',
-        detail: `你的成绩 ${score} ≥ 9中指标最低分 ${data.zhibiao_min}（统招线${data.tongzhao}，降了${(data.tongzhao - data.zhibiao_min).toFixed(1)}分），✅ 录取！`,
-        scoreLine: data.zhibiao_min
-      });
-    } else {
-      steps.push({
-        phase: '第二段 · 指标到校',
-        school: school,
-        type: zbLabels[i],
-        result: 'fail',
-        detail: `你的成绩 ${score} < 9中指标最低分 ${data.zhibiao_min}，差 ${(data.zhibiao_min - score).toFixed(1)} 分`,
-        scoreLine: data.zhibiao_min
-      });
-    }
-  }
-
-  // === 第二段：指标统调 ===
-  const ttLabels = ['指标统调志愿A', '指标统调志愿B'];
-  for (let i = 0; i < vol.tongtiao.length; i++) {
-    const school = vol.tongtiao[i];
-    if (!school) {
-      steps.push({
-        phase: '第二段 · 指标统调',
-        school: '（未填报）',
-        type: ttLabels[i],
-        result: 'skip',
-        detail: '未填报，跳过'
-      });
-      continue;
-    }
-    if (admitted) {
-      steps.push({
-        phase: '第二段 · 指标统调',
-        school: school,
-        type: ttLabels[i],
-        result: 'skip',
-        detail: '已被前序志愿录取，不再检索'
-      });
-      continue;
-    }
-    const data = SCHOOL_DATA[school];
-    if (score >= data.tongtiao) {
-      admitted = school;
-      admittedType = '指标统调';
-      steps.push({
-        phase: '第二段 · 指标统调',
-        school: school,
-        type: ttLabels[i],
-        result: 'hit',
-        detail: `你的成绩 ${score} ≥ 指标统调线 ${data.tongtiao}，✅ 录取！`,
-        scoreLine: data.tongtiao
-      });
-    } else {
-      steps.push({
-        phase: '第二段 · 指标统调',
-        school: school,
-        type: ttLabels[i],
-        result: 'fail',
-        detail: `你的成绩 ${score} < 指标统调线 ${data.tongtiao}，差 ${(data.tongtiao - score).toFixed(1)} 分`,
-        scoreLine: data.tongtiao
-      });
-    }
-  }
-
-  // === 第三段：国际班 ===
-  if (vol.s3) {
-    if (admitted) {
-      steps.push({
-        phase: '第三段 · 国际班',
-        school: vol.s3,
-        type: '国际班志愿',
-        result: 'skip',
-        detail: '已被前序志愿录取，不再检索'
-      });
-    } else {
-      steps.push({
-        phase: '第三段 · 国际班',
-        school: vol.s3,
-        type: '国际班志愿',
-        result: 'skip',
-        detail: '国际班需单独考核，本模拟跳过'
-      });
-    }
-  }
-
-  // === 第四段：一般普通高中 ===
-  const gLabels = ['一般高中志愿A','一般高中志愿B','一般高中志愿C','一般高中志愿D','一般高中志愿E','一般高中志愿F'];
-  for (let i = 0; i < vol.general.length; i++) {
-    const school = vol.general[i];
-    if (!school) continue;
-    if (admitted) {
-      steps.push({
-        phase: '第四段 · 一般普通高中',
-        school: school,
-        type: gLabels[i],
-        result: 'skip',
-        detail: '已被前序志愿录取，不再检索'
-      });
-      continue;
-    }
-    const data = GENERAL_SCHOOLS[school];
-    if (score >= data.score) {
-      admitted = school;
-      admittedType = '一般普通高中';
-      steps.push({
-        phase: '第四段 · 一般普通高中',
-        school: school,
-        type: gLabels[i],
-        result: 'hit',
-        detail: `你的成绩 ${score} ≥ 录取线 ${data.score}，✅ 录取！`,
-        scoreLine: data.score
-      });
-    } else {
-      steps.push({
-        phase: '第四段 · 一般普通高中',
-        school: school,
-        type: gLabels[i],
-        result: 'fail',
-        detail: `你的成绩 ${score} < 录取线 ${data.score}，差 ${(data.score - score).toFixed(1)} 分`,
-        scoreLine: data.score
-      });
-    }
-  }
-
-  // ===== 渲染结果 =====
-  renderResult(score, vol, steps, admitted, admittedType);
-}
-
-function renderResult(score, vol, steps, admitted, admittedType) {
-  const panel = document.getElementById('resultPanel');
-  let html = '';
-
-  // 结果头部
-  if (admitted) {
-    html += `<div class="result-header admitted">
-      🎉 恭喜！模拟录取成功 — 以 <strong>${score}</strong> 分通过【${admittedType}】被 <strong>${admitted}</strong> 录取
-    </div>`;
-  } else {
-    html += `<div class="result-header rejected">
-      😔 很遗憾，${score} 分未被任何填报的学校录取 — 请调整志愿策略后重试
-    </div>`;
-  }
-
-  html += '<div class="result-body">';
-
-  // 录取过程
-  html += '<h3 style="font-size:15px;color:#1a3a6c;margin-bottom:15px;">📋 录取检索过程（按实际顺序）</h3>';
-
-  let currentPhase = '';
-  steps.forEach((step, idx) => {
-    if (step.phase !== currentPhase) {
-      currentPhase = step.phase;
-      html += `<div style="font-size:12px;font-weight:600;color:#1a3a6c;margin:15px 0 8px;padding:5px 0;border-bottom:1px solid #e0e4ef;">${currentPhase}</div>`;
-    }
-    const icons = { hit: '✓', pass: '✓', fail: '✗', skip: '—' };
-    html += `<div class="result-step ${step.result}">
-      <div class="step-icon">${icons[step.result] || '—'}</div>
-      <div class="step-content">
-        <strong>${step.type}</strong>：<span class="step-school">${step.school}</span><br>
-        <span style="font-size:12px;">${step.detail}</span>
-      </div>
-    </div>`;
-  });
-
-  // 分析
-  html += '<div class="analysis-box">';
-  html += '<h3>📊 志愿填报分析</h3>';
-
-  if (admitted) {
-    const data = SCHOOL_DATA[admitted] || GENERAL_SCHOOLS[admitted];
-    html += '<ul>';
-
-    if (admittedType === '统招') {
-      html += `<li>你以 <span class="success">${score}</span> 分通过<strong>统招</strong>进入${admitted}（统招线 ${data.tongzhao}）</li>`;
-      // 检查是否有指标到校更好选择
-      const zbSchools = vol.zhibiao.filter(s => s && SCHOOL_DATA[s]);
-      zbSchools.forEach(s => {
-        const sd = SCHOOL_DATA[s];
-        if (sd.tongzhao > data.tongzhao) {
-          html += `<li>💡 <span class="highlight">提示</span>：你在指标到校填了${s}（统招线${sd.tongzhao}），但因为统招先录取，指标到校未被检索。如果统招不填保底学校，可能有机会通过指标到校进更好的学校。</li>`;
-        }
-      });
-    }
-
-    if (admittedType === '指标到校') {
-      html += `<li>你以 <span class="success">${score}</span> 分通过<strong>指标到校</strong>进入${admitted}</li>`;
-      html += `<li>该校统招线为 ${data.tongzhao}，指标到校让你<span class="success">降了 ${(data.tongzhao - data.zhibiao_min).toFixed(1)} 分</span>录取</li>`;
-      html += `<li>这正是指标到校的核心价值 — 在本校（9中）内部竞争名额</li>`;
-
-      // 检查统招是否有意为之
-      const tzFilled = vol.tongzhao.filter(s => s);
-      if (tzFilled.length === 0) {
-        html += `<li>✅ 你的策略正确：统招留空，成功保护了指标到校机会</li>`;
-      } else {
-        const tzBelow = tzFilled.filter(s => SCHOOL_DATA[s] && score >= SCHOOL_DATA[s].tongzhao);
-        if (tzBelow.length === 0) {
-          html += `<li>✅ 统招虽然填了学校但分数不够，自然落到指标到校 — 结果是好的</li>`;
-        }
-      }
-    }
-
-    if (admittedType === '指标统调') {
-      html += `<li>你以 <span class="success">${score}</span> 分通过<strong>指标统调</strong>进入${admitted}（统调线${data.tongtiao}）</li>`;
-      html += `<li>指标统调是各校指标到校未用完名额的二次分配</li>`;
-    }
-
-    if (admittedType === '一般普通高中') {
-      html += `<li>你以 <span class="success">${score}</span> 分进入第四段一般普通高中：${admitted}</li>`;
-      html += `<li><span class="highlight">建议</span>：如果成绩有提升空间，可以争取进入第二段省级示范性高中</li>`;
-    }
-
-    html += '</ul>';
-  } else {
-    html += '<ul>';
-    html += `<li><span class="highlight">所有志愿均未达到录取线</span>，建议：</li>`;
-    html += `<li>1. 降低目标学校层次</li>`;
-    html += `<li>2. 充分利用指标到校的降分优势</li>`;
-    html += `<li>3. 确保第四段（一般普通高中）填满保底</li>`;
-    html += '</ul>';
-  }
-
-  // 关键策略提醒
-  html += '</div>';
-
-  html += '<div class="analysis-box" style="margin-top:12px;">';
-  html += '<h3>⚡ 关键策略复盘</h3>';
-  html += '<ul>';
-
-  // 检查统招是否"浪费"了指标到校机会
-  const tzFilled = vol.tongzhao.filter(s => s);
-  const zbFilled = vol.zhibiao.filter(s => s);
-  if (tzFilled.length > 0 && zbFilled.length > 0 && admittedType === '统招') {
-    const admittedTzScore = SCHOOL_DATA[admitted]?.tongzhao;
-    const bestZbSchool = zbFilled.find(s => SCHOOL_DATA[s] && SCHOOL_DATA[s].tongzhao > admittedTzScore);
-    if (bestZbSchool) {
-      const bsd = SCHOOL_DATA[bestZbSchool];
-      if (score >= bsd.zhibiao_min) {
-        html += `<li>⚠️ <span class="highlight">重要发现</span>：你被${admitted}统招录取（${admittedTzScore}分），但如果统招不填该校或不填更低的保底校，你本可以通过指标到校进入<strong>${bestZbSchool}</strong>（指标最低分${bsd.zhibiao_min}），这是更好的学校！</li>`;
-        html += `<li>💡 <strong>教训</strong>：统招填的保底学校会"截断"指标到校机会。如果指标到校目标更高，统招应策略性留空。</li>`;
-      }
-    }
-  }
-
-  // 指标到校是否填了分差大的学校
-  zbFilled.forEach(s => {
-    const data = SCHOOL_DATA[s];
-    if (data && data.zhibiao_min > data.tongzhao + 3) {
-      html += `<li>⚠️ ${s}指标到校最低分(${data.zhibiao_min})高于统招线(${data.tongzhao})，在9中指标到校竞争激烈，不如直接统招</li>`;
-    }
-  });
-
-  // 是否完全没填保底
-  if (!vol.general.some(s => s) && !admitted) {
-    html += `<li>⚠️ <span class="highlight">第四段（一般普通高中）一个都没填！</span>没有兜底志愿非常危险</li>`;
-  }
-
-  html += '</ul></div>';
-
-  // 分数线参考表
-  html += '<div class="analysis-box" style="margin-top:12px;">';
-  html += '<h3>📊 2025年9中各校录取分数线参考</h3>';
-  html += `<table class="ref-table">
-    <thead><tr>
-      <th>学校</th><th>统招线</th><th>指标名额</th><th>指标最低分</th><th>指标统调线</th><th>你的${score}分</th>
-    </tr></thead><tbody>`;
-
-  Object.entries(SCHOOL_DATA).forEach(([name, d]) => {
-    const tzOk = score >= d.tongzhao ? '✅' : '❌';
-    const zbOk = score >= d.zhibiao_min ? '✅' : '❌';
-    const ttOk = score >= d.tongtiao ? '✅' : '❌';
-    const isTarget = (vol.tongzhao.includes(name) || vol.zhibiao.includes(name) || vol.tongtiao.includes(name));
-    html += `<tr ${isTarget ? 'class="current"' : ''}>
-      <td style="text-align:left;">${name}${isTarget ? ' ⭐' : ''}</td>
-      <td>${d.tongzhao} ${tzOk}</td>
-      <td>${d.zhibiao_num}个</td>
-      <td>${d.zhibiao_min} ${zbOk}</td>
-      <td>${d.tongtiao} ${ttOk}</td>
-      <td>${score >= d.tongzhao ? '<span style="color:#27ae60;font-weight:700">统招可进</span>' :
-             score >= d.zhibiao_min ? '<span style="color:#2e7d32;font-weight:700">指标可进</span>' :
-             score >= d.tongtiao ? '<span style="color:#e65100;font-weight:700">统调可进</span>' :
-             '<span style="color:#999">不够</span>'}</td>
-    </tr>`;
-  });
-
-  html += '</tbody></table></div>';
-
-  html += '</div>';
-
-  panel.innerHTML = html;
-  panel.classList.add('active');
-  panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-
-// 回车提交
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'Enter' && document.getElementById('scoreModal').classList.contains('active')) {
-    simulateAdmission();
-  }
-});
-
-// 初始化
-initSelects();
-</script>
+<script src="static/data.js"></script>
+<script src="static/app.js"></script>
 </body>
 </html>

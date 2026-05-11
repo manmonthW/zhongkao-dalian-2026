@@ -1,0 +1,253 @@
+/* ===== 全局 ===== */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: "Microsoft YaHei", "SimHei", sans-serif; background: #f0f2f5; color: #333; }
+
+/* 顶部导航 */
+.top-bar {
+  background: linear-gradient(135deg, #1a3a6c, #2a5298);
+  color: #fff;
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  position: sticky; top: 0; z-index: 100;
+}
+.top-bar h1 { font-size: 18px; font-weight: 600; }
+.top-bar .badge {
+  background: #e74c3c; color: #fff; padding: 3px 10px;
+  border-radius: 12px; font-size: 12px;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
+
+/* 考生信息 */
+.student-info {
+  background: #fff; margin: 15px auto; max-width: 1060px;
+  padding: 15px 20px; border-radius: 8px; border: 1px solid #e0e0e0;
+  display: flex; flex-wrap: wrap; gap: 15px; align-items: center;
+}
+.student-info label { font-size: 13px; color: #666; }
+.student-info span { font-weight: 600; color: #1a3a6c; margin-left: 4px; }
+.student-info .info-item { display: flex; align-items: center; gap: 4px; }
+
+/* ===== Tab 导航 ===== */
+.tab-nav {
+  max-width: 1060px; margin: 0 auto 15px;
+  display: flex; gap: 0; border-bottom: 3px solid #1a3a6c;
+}
+.tab-btn {
+  padding: 10px 24px; font-size: 14px; font-weight: 600;
+  background: #e8edf5; color: #555; border: none; cursor: pointer;
+  border-radius: 8px 8px 0 0; transition: all 0.2s;
+  border: 1px solid #d0d7e2; border-bottom: none; margin-right: -1px;
+}
+.tab-btn.active { background: #1a3a6c; color: #fff; }
+.tab-btn:hover:not(.active) { background: #d0d7e2; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* ===== 批次容器 ===== */
+.batch-container { max-width: 1060px; margin: 0 auto 20px; }
+.batch-header {
+  background: linear-gradient(135deg, #1a3a6c, #2a5298);
+  color: #fff; padding: 10px 20px; border-radius: 8px 8px 0 0;
+  font-size: 15px; font-weight: 600; letter-spacing: 2px;
+}
+.section {
+  background: #fff; border: 1px solid #d0d7e2; border-top: none; padding: 0;
+}
+.section:last-child { border-radius: 0 0 8px 8px; }
+.section-header {
+  background: #e8edf5; padding: 10px 20px; font-size: 13px;
+  color: #1a3a6c; font-weight: 600; border-bottom: 1px solid #d0d7e2;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.section-body { padding: 12px 20px; }
+
+/* 志愿行 */
+.vol-group { margin-bottom: 12px; }
+.vol-group-label {
+  font-size: 12px; color: #888; margin-bottom: 6px;
+  font-weight: 600; letter-spacing: 1px;
+}
+.vol-row {
+  display: flex; gap: 10px; align-items: center;
+  margin-bottom: 8px; flex-wrap: wrap;
+}
+.vol-row label { font-size: 13px; color: #555; min-width: 120px; white-space: nowrap; }
+.vol-row select {
+  flex: 1; min-width: 180px; max-width: 280px;
+  padding: 7px 10px; border: 1px solid #c0c8d8; border-radius: 4px;
+  font-size: 13px; background: #fff; color: #333; cursor: pointer; transition: border-color 0.2s;
+}
+.vol-row select:focus { outline: none; border-color: #2a5298; box-shadow: 0 0 0 2px rgba(42,82,152,0.15); }
+.vol-divider { border: none; border-top: 1px dashed #d0d7e2; margin: 10px 0; }
+
+/* 标签 */
+.tag {
+  display: inline-block; padding: 1px 6px; border-radius: 3px;
+  font-size: 11px; font-weight: 600; margin-left: 4px;
+}
+.tag-tongzhao { background: #e3f2fd; color: #1565c0; }
+.tag-zhibiao { background: #e8f5e9; color: #2e7d32; }
+.tag-tongtiao { background: #fff3e0; color: #e65100; }
+
+/* 操作区 */
+.action-bar { max-width: 1060px; margin: 20px auto; text-align: center; }
+.btn {
+  padding: 10px 36px; border: none; border-radius: 6px;
+  font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; margin: 0 8px;
+}
+.btn-primary { background: linear-gradient(135deg, #2a5298, #1a3a6c); color: #fff; }
+.btn-primary:hover { box-shadow: 0 4px 12px rgba(42,82,152,0.4); transform: translateY(-1px); }
+.btn-reset { background: #e0e0e0; color: #555; }
+.btn-reset:hover { background: #d0d0d0; }
+.btn-sm { padding: 6px 16px; font-size: 13px; }
+
+/* ===== 模态框 ===== */
+.modal-overlay {
+  display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5); z-index: 1000;
+  justify-content: center; align-items: center;
+}
+.modal-overlay.active { display: flex; }
+.modal {
+  background: #fff; border-radius: 12px; padding: 30px;
+  width: 420px; max-width: 90vw; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+.modal h2 { font-size: 18px; color: #1a3a6c; margin-bottom: 20px; text-align: center; }
+.modal .score-input-group { text-align: center; margin-bottom: 20px; }
+.modal .score-input-group input {
+  width: 160px; padding: 12px; font-size: 28px; text-align: center;
+  border: 2px solid #c0c8d8; border-radius: 8px; font-weight: 700; color: #1a3a6c;
+}
+.modal .score-input-group input:focus { outline: none; border-color: #2a5298; }
+.modal .score-hint { font-size: 12px; color: #999; margin-top: 8px; }
+.modal .btn-group { display: flex; gap: 10px; justify-content: center; }
+
+/* ===== 结果面板 ===== */
+.result-panel {
+  display: none; max-width: 1060px; margin: 20px auto;
+  background: #fff; border-radius: 12px; overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+.result-panel.active { display: block; }
+.result-header { padding: 20px 24px; color: #fff; font-size: 16px; font-weight: 600; }
+.result-header.admitted { background: linear-gradient(135deg, #27ae60, #2ecc71); }
+.result-header.rejected { background: linear-gradient(135deg, #c0392b, #e74c3c); }
+.result-body { padding: 20px 24px; }
+
+.result-step {
+  display: flex; align-items: flex-start; margin-bottom: 8px;
+  padding: 8px 12px; border-radius: 8px; font-size: 13px; line-height: 1.6;
+}
+.result-step.pass { background: #f0faf0; border-left: 4px solid #27ae60; }
+.result-step.fail { background: #fdf0f0; border-left: 4px solid #e74c3c; }
+.result-step.skip { background: #f5f5f5; border-left: 4px solid #bbb; color: #999; }
+.result-step.hit  { background: #e8f5e9; border-left: 4px solid #2e7d32; }
+.result-step .step-icon {
+  min-width: 22px; height: 22px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; margin-right: 10px; flex-shrink: 0;
+}
+.result-step.pass .step-icon { background: #27ae60; color: #fff; }
+.result-step.fail .step-icon { background: #e74c3c; color: #fff; }
+.result-step.skip .step-icon { background: #bbb; color: #fff; }
+.result-step.hit  .step-icon { background: #2e7d32; color: #fff; }
+.result-step .step-content { flex: 1; }
+.step-school { font-weight: 700; color: #1a3a6c; }
+
+/* ===== 分析区域 ===== */
+.analysis-box {
+  margin-top: 16px; padding: 16px; background: #f8f9fc;
+  border-radius: 8px; border: 1px solid #e0e4ef;
+}
+.analysis-box h3 { font-size: 14px; color: #1a3a6c; margin-bottom: 10px; }
+.analysis-box p, .analysis-box li { font-size: 13px; line-height: 1.8; color: #555; }
+.analysis-box ul { padding-left: 20px; }
+.analysis-box .highlight { color: #e74c3c; font-weight: 600; }
+.analysis-box .success { color: #27ae60; font-weight: 600; }
+
+/* ===== 数据表 ===== */
+.data-table {
+  width: 100%; border-collapse: collapse; font-size: 12px;
+}
+.data-table th {
+  background: #e8edf5; padding: 8px 6px; text-align: center;
+  color: #1a3a6c; font-weight: 600; border: 1px solid #d0d7e2;
+  position: sticky; top: 0; z-index: 1;
+}
+.data-table td {
+  padding: 5px 6px; text-align: center; border: 1px solid #e0e0e0;
+}
+.data-table tr:nth-child(even) { background: #fafbfd; }
+.data-table tr:hover { background: #eef3fb; }
+.data-table tr.current { background: #fff3cd; font-weight: 600; }
+
+/* ===== 图表区 ===== */
+.chart-container {
+  max-width: 1060px; margin: 0 auto 20px;
+  background: #fff; border-radius: 12px; padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+.chart-container h3 {
+  font-size: 15px; color: #1a3a6c; margin-bottom: 15px;
+  padding-bottom: 8px; border-bottom: 2px solid #e8edf5;
+}
+.chart-svg { width: 100%; overflow-x: auto; }
+
+/* 热力图 */
+.heat-bar {
+  height: 24px; border-radius: 4px; position: relative;
+  display: flex; align-items: center; padding: 0 8px;
+  font-size: 11px; font-weight: 600; color: #fff;
+  min-width: 30px; transition: width 0.5s;
+}
+.heat-red { background: linear-gradient(90deg, #e74c3c, #c0392b); }
+.heat-orange { background: linear-gradient(90deg, #f39c12, #e67e22); }
+.heat-green { background: linear-gradient(90deg, #27ae60, #2ecc71); }
+
+/* 位次标注 */
+.rank-badge {
+  display: inline-block; padding: 2px 8px; border-radius: 10px;
+  font-size: 12px; font-weight: 600; margin-left: 8px;
+}
+.rank-high { background: #fde8e8; color: #c0392b; }
+.rank-mid  { background: #fef5e7; color: #e67e22; }
+.rank-low  { background: #e8f8f0; color: #27ae60; }
+
+/* 底部提示 */
+.footer-note {
+  max-width: 1060px; margin: 15px auto 30px; padding: 12px 20px;
+  background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px;
+  font-size: 12px; color: #856404; line-height: 1.8;
+}
+
+/* 一分一段查询面板 */
+.rank-query {
+  display: flex; gap: 10px; align-items: center; margin-bottom: 15px;
+  flex-wrap: wrap;
+}
+.rank-query input {
+  width: 120px; padding: 8px 12px; border: 2px solid #c0c8d8;
+  border-radius: 6px; font-size: 16px; font-weight: 600; text-align: center;
+}
+.rank-query input:focus { outline: none; border-color: #2a5298; }
+.rank-result {
+  padding: 10px 16px; background: #e8f5e9; border-radius: 8px;
+  font-size: 14px; font-weight: 600; color: #2e7d32;
+}
+
+/* 招生计划变化指示器 */
+.change-up { color: #e74c3c; }
+.change-down { color: #27ae60; }
+.change-zero { color: #999; }
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .vol-row { flex-direction: column; align-items: flex-start; }
+  .vol-row select { max-width: 100%; }
+  .student-info { flex-direction: column; }
+  .tab-btn { padding: 8px 12px; font-size: 12px; }
+}
