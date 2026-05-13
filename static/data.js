@@ -4,7 +4,7 @@
 
 // ===== 2025年9中录取数据（已有，增强） =====
 const SCHOOL_DATA = {
-  "大连市第二十四中学":   { short:"24中", tier:1, tongzhao:777,   zhibiao_min:775,  zhibiao_max:776.5, zhibiao_num:6, tongtiao:776 },
+  "大连市第二十四中学":   { short:"24中", tier:1, tongzhao:777,   zhibiao_min:775,  zhibiao_max:776.5, zhibiao_num:6, tongtiao:772 },
   "大连育明高级中学":     { short:"育明", tier:1, tongzhao:772,   zhibiao_min:771.5,zhibiao_max:773.5, zhibiao_num:7, tongtiao:772 },
   "大连市第八中学":       { short:"8中",  tier:1, tongzhao:767.5, zhibiao_min:767,  zhibiao_max:774.5, zhibiao_num:7, tongtiao:767.5 },
   "大连二十四中金普校区": { short:"24金", tier:2, tongzhao:767.5, zhibiao_min:764.5,zhibiao_max:764.5, zhibiao_num:1, tongtiao:766 },

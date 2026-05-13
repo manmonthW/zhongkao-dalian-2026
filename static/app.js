@@ -16,13 +16,36 @@ function switchTab(tabId) {
 // ===== 初始化下拉菜单 =====
 function initSelects() {
   const schoolNames = Object.keys(SCHOOL_DATA);
-  document.querySelectorAll('.school-select').forEach(sel => {
+  // 统招下拉：显示统招分数线
+  document.querySelectorAll('.tz-select').forEach(sel => {
     sel.innerHTML = '<option value="">— 请选择 —</option>';
     schoolNames.forEach(name => {
+      const d = SCHOOL_DATA[name];
       const opt = document.createElement('option');
       opt.value = name;
+      opt.textContent = `${d.short}（25年统招线 ${d.tongzhao}）`;
+      sel.appendChild(opt);
+    });
+  });
+  // 指标到校下拉：显示指标最低分数线
+  document.querySelectorAll('.zb-select').forEach(sel => {
+    sel.innerHTML = '<option value="">— 请选择 —</option>';
+    schoolNames.forEach(name => {
       const d = SCHOOL_DATA[name];
-      opt.textContent = `${name}（统招${d.tongzhao} / 指标${d.zhibiao_num}个）`;
+      const opt = document.createElement('option');
+      opt.value = name;
+      opt.textContent = `${d.short}（25年指标线 ${d.zhibiao_min} / ${d.zhibiao_num}个名额）`;
+      sel.appendChild(opt);
+    });
+  });
+  // 指标统调下拉：显示统调分数线
+  document.querySelectorAll('.tt-select').forEach(sel => {
+    sel.innerHTML = '<option value="">— 请选择 —</option>';
+    schoolNames.forEach(name => {
+      const d = SCHOOL_DATA[name];
+      const opt = document.createElement('option');
+      opt.value = name;
+      opt.textContent = `${d.short}（25年统调线 ${d.tongtiao}）`;
       sel.appendChild(opt);
     });
   });
